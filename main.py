@@ -1,9 +1,9 @@
-import openpyxl 
+import openpyxl, random
 import pandas as pd
 
 
-
-wb = openpyxl.load_workbook('AuthorsListnContributions.xlsx')
+FILE_NAME = "AuthorsListnContributions.xlsx"
+wb = openpyxl.load_workbook(FILE_NAME)
 # This workbook has only one sheet, therefore, we choose the active sheet directly
 ws = wb.active
 
@@ -84,5 +84,43 @@ def generate_author_list():
 
     print("The orders of the authors in your manuscript has been written in HTML file successfully.")
 
+
+def customise_data():
+    # as of writing this comment, A2:A84 -> Authors First name, B2:B84 --> Last name
+    list = generate_random_sequence()
+    df = pd.DataFrame(ws.values)
+    ddf = df.to_dict()
+    first_name = ddf[0]
+    del first_name[0]
+    last_name = ddf[1]
+    del last_name[0]
+    j = 2    
+    for i in list:
+        print(i)
+        print(first_name[i])
+        print(last_name[i])
+        ws["A" + str(j)] = first_name[i]
+        ws["B" + str(j)] = last_name[i]
+        j += 1
+    wb.save(filename=FILE_NAME)
+
+
+def print_rows():
+    for row in ws.iter_rows(values_only=True):
+        print(row)
+
+
+def generate_random_sequence():
+    # as of writing this comment, the sheet has A2:A84 -> Authors First name, B2:B84 --> Last name
+    my_list = range(1,84)
+    random_sample = random.sample(my_list, 83)
+    
+    return random_sample
+
+
 if __name__ == "__main__":
+    print_rows()
+    generate_random_sequence()
+    customise_data()
     generate_author_list()
+    print_rows()
