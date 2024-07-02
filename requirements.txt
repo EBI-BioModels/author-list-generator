@@ -1,0 +1,3 @@
+Openpyxl
+pandas
+xlrd
