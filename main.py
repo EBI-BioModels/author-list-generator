@@ -118,9 +118,14 @@ def generate_random_sequence():
     return random_sample
 
 
-if __name__ == "__main__":
+def generate_with_random_names():
     print_rows()
     generate_random_sequence()
     customise_data()
     generate_author_list()
     print_rows()
+
+
+if __name__ == "__main__":
+    # generate_with_random_names()
+    generate_author_list()
