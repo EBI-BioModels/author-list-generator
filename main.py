@@ -110,19 +110,19 @@ def generate_author_list():
     for item in author_with_affiliation:
         # print(str(i) + "\t" + str(author_with_affiliation[item]) + "\t" + item)
         # print(get_super(str(i)) + item)
-        institutions += "<sup>" + str(i) + "</sup>" + item + "<br/>" 
+        institutions += "<sup>" + str(i) + "</sup>" + item + "<br/>"
         i += 1
 
     file = open("output.html", "w")
 
     # Write HTML content
-    file.write("<html>")
+    file.write("<!DOCTYPE html><html>")
     file.write("<head>")
-    file.write("<title>Orders of the authors</title>")
+    file.write("<meta charset='utf-8'><title>Orders of the authors</title>")
     file.write("</head>")
     file.write("<body>")
     file.write("<h1>Orders of the authors</h1>")
-    file.write("<p>" + author_para + "</p>")
+    file.write("<p>" + author_para.rstrip(", ") + "</p>")
     file.write("<p>" + institutions + "</p>")
     file.write("</body>")
     file.write("</html>")
@@ -141,7 +141,7 @@ def customise_data():
     del first_name[0]
     last_name = ddf[1]
     del last_name[0]
-    j = 2    
+    j = 2
     for i in list:
         print(i)
         print(first_name[i])
@@ -159,9 +159,9 @@ def print_rows():
 
 def generate_random_sequence():
     # as of writing this comment, the sheet has A2:A84 -> Authors First name, B2:B84 --> Last name
-    my_list = range(1,84)
+    my_list = range(1, 84)
     random_sample = random.sample(my_list, 83)
-    
+
     return random_sample
 
 
