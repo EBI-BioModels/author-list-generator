@@ -18,6 +18,14 @@ def combine_affiliations(affiliations: list[str]) -> str:
             s += a + "; "
     s.rstrip("; ")
     return s
+
+
+def prepare_data():
+    df = pd.DataFrame(ws.values)
+    d_df = df.to_dict()
+    print(d_df)
+
+
 def compute_affiliations_str(indexes: list[int]) -> str:
     org_indexes = [item for item in indexes if item > 0]
     org_indexes.sort()
@@ -53,8 +61,6 @@ def generate_author_list():
 
     authorship_order = d_df[8]
     del authorship_order[0]
-    affiliation_list = {}
-    affiliation_order = 0
     author_para = ""
     author_with_affiliation = {}
     for index in authorship_order:
@@ -134,7 +140,7 @@ def generate_author_list():
 
 def customise_data():
     # as of writing this comment, A2:A84 -> Authors First name, B2:B84 --> Last name
-    list = generate_random_sequence()
+    _list = generate_random_sequence()
     df = pd.DataFrame(ws.values)
     ddf = df.to_dict()
     first_name = ddf[0]
@@ -142,7 +148,7 @@ def customise_data():
     last_name = ddf[1]
     del last_name[0]
     j = 2
-    for i in list:
+    for i in _list:
         print(i)
         print(first_name[i])
         print(last_name[i])
