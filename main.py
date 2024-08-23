@@ -1,11 +1,11 @@
 import csv
+import random
+
 import openpyxl
 import pandas as pd
-import random
 from unidecode import unidecode
 
-
-FILE_NAME = "AuthorsListnContributions.xlsx"
+FILE_NAME = "AuthorsListnContributionsV5.xlsx"
 wb = openpyxl.load_workbook(FILE_NAME)
 # This workbook has only one sheet, therefore, we choose the active sheet directly
 ws = wb.active
@@ -34,6 +34,23 @@ def compute_affiliations_str(indexes: list[int]) -> str:
         s_indexes += str(index) + ", "
     s_indexes = s_indexes.rstrip(", ")
     return s_indexes
+
+
+def determine_org_index(author_with_affiliation: {}, index: int, affiliations: list[str]) -> list:
+    result = []
+    for affiliation in affiliations:
+        if affiliation is not None:
+            if affiliation not in author_with_affiliation:
+                author_with_affiliation[affiliation] = [affiliation]
+            else:
+                author_with_affiliation[affiliation].append(index)
+            org_index = list(author_with_affiliation.keys()).index(affiliation) + 1
+        else:
+            org_index = -1
+
+        result.append(org_index)
+    print(result)
+    return result
 
 
 def generate_author_list():
@@ -73,38 +90,13 @@ def generate_author_list():
         org2 = affiliation2[index]
         org3 = affiliation3[index]
         org4 = affiliation4[index]
-        org1_index = -1
-        org2_index = -1
-        org3_index = -1
-        org4_index = -1
-        if org1 is not None:
-            if org1 not in author_with_affiliation:
-                author_with_affiliation[org1] = [index]
-            else:
-                author_with_affiliation[org1].append(index)
-            org1_index = list(author_with_affiliation.keys()).index(org1) + 1
 
-        if org2 is not None:
-            if org2 not in author_with_affiliation:
-                author_with_affiliation[org2] = [index]
-            else:
-                author_with_affiliation[org2].append(index)
-            org2_index = list(author_with_affiliation.keys()).index(org2) + 1
+        result = determine_org_index(author_with_affiliation, index, [org1, org2, org3, org4])
 
-        if org3 is not None:
-            if org3 not in author_with_affiliation:
-                author_with_affiliation[org3] = [index]
-            else:
-                author_with_affiliation[org3].append(index)
-            org3_index = list(author_with_affiliation.keys()).index(org3) + 1
-
-        if org4 is not None:
-            if org4 not in author_with_affiliation:
-                author_with_affiliation[org4] = [index]
-            else:
-                author_with_affiliation[org4].append(index)
-            org4_index = list(author_with_affiliation.keys()).index(org4) + 1
-
+        org1_index = result[0]
+        org2_index = result[1]
+        org3_index = result[2]
+        org4_index = result[3]
         org_indexes = [org1_index, org2_index, org3_index, org4_index]
         affiliation_superscript = compute_affiliations_str(org_indexes)
 
@@ -209,6 +201,6 @@ def generate_author_list_for_biorxiv():
 
 if __name__ == "__main__":
     # generate_with_random_names()
-    # generate_author_list()
-    generate_author_list_for_biorxiv()
+    generate_author_list()
+    # generate_author_list_for_biorxiv()
     # prepare_data()
