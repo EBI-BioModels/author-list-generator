@@ -7,6 +7,17 @@ wb = openpyxl.load_workbook(FILE_NAME)
 # This workbook has only one sheet, therefore, we choose the active sheet directly
 ws = wb.active
 
+
+def compute_affiliations_str(indexes: list[int]) -> str:
+    org_indexes = [item for item in indexes if item > 0]
+    org_indexes.sort()
+    s_indexes = ""
+    for index in org_indexes:
+        s_indexes += str(index) + ", "
+    s_indexes = s_indexes.rstrip(", ")
+    return s_indexes
+
+
 def generate_author_list():
     df = pd.DataFrame(ws.values)
     d_df = df.to_dict()
@@ -20,9 +31,17 @@ def generate_author_list():
     del affiliation1[0]
     affiliation2 = d_df[4]
     del affiliation2[0]
-    contribution = d_df[5]
+
+    affiliation3 = d_df[5]
+    del affiliation3[0]
+
+    affiliation4 = d_df[6]
+    del affiliation4[0]
+
+    contribution = d_df[7]
     del contribution[0]
-    authorship_order = d_df[6]
+
+    authorship_order = d_df[8]
     del authorship_order[0]
     affiliation_list = {}
     affiliation_order = 0
@@ -36,26 +55,44 @@ def generate_author_list():
 
         org1 = affiliation1[index]
         org2 = affiliation2[index]
-        affiliation_superscript = ""
+        org3 = affiliation3[index]
+        org4 = affiliation4[index]
+        org1_index = -1
+        org2_index = -1
+        org3_index = -1
+        org4_index = -1
         if org1 is not None:
             if org1 not in author_with_affiliation:
                 author_with_affiliation[org1] = [index]
             else:
                 author_with_affiliation[org1].append(index)
             org1_index = list(author_with_affiliation.keys()).index(org1) + 1
-            affiliation_superscript = str(org1_index)
-        
+
         if org2 is not None:
             if org2 not in author_with_affiliation:
                 author_with_affiliation[org2] = [index]
             else:
                 author_with_affiliation[org2].append(index)
             org2_index = list(author_with_affiliation.keys()).index(org2) + 1
-            if org1_index < org2_index:
-                affiliation_superscript += ", " + str(org2_index)
+
+        if org3 is not None:
+            if org3 not in author_with_affiliation:
+                author_with_affiliation[org3] = [index]
             else:
-                affiliation_superscript = str(org2_index) + ", " + affiliation_superscript
-        author_para += "<sup>" + affiliation_superscript + "</sup>"#get_super(affiliation_superscript)
+                author_with_affiliation[org3].append(index)
+            org3_index = list(author_with_affiliation.keys()).index(org3) + 1
+
+        if org4 is not None:
+            if org4 not in author_with_affiliation:
+                author_with_affiliation[org4] = [index]
+            else:
+                author_with_affiliation[org4].append(index)
+            org4_index = list(author_with_affiliation.keys()).index(org4) + 1
+
+        org_indexes = [org1_index, org2_index, org3_index, org4_index]
+        affiliation_superscript = compute_affiliations_str(org_indexes)
+
+        author_para += "<sup>" + affiliation_superscript + "</sup>"  # get_super(affiliation_superscript)
         author_para += ", "
 
     i = 1
