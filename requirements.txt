@@ -2,3 +2,4 @@ Openpyxl
 pandas
 xlrd
 unidecode
+requests
