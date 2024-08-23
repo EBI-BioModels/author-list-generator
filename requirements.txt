@@ -1,3 +1,4 @@
 Openpyxl
 pandas
 xlrd
+unidecode

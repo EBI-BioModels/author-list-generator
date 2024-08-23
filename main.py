@@ -1,5 +1,8 @@
-import openpyxl, random
+import csv
+import openpyxl
 import pandas as pd
+import random
+from unidecode import unidecode
 
 
 FILE_NAME = "AuthorsListnContributions.xlsx"
@@ -8,6 +11,13 @@ wb = openpyxl.load_workbook(FILE_NAME)
 ws = wb.active
 
 
+def combine_affiliations(affiliations: list[str]) -> str:
+    s = ""
+    for a in affiliations:
+        if a is not None:
+            s += a + "; "
+    s.rstrip("; ")
+    return s
 def compute_affiliations_str(indexes: list[int]) -> str:
     org_indexes = [item for item in indexes if item > 0]
     org_indexes.sort()
@@ -163,6 +173,36 @@ def generate_with_random_names():
     print_rows()
 
 
+def generate_author_list_for_biorxiv():
+    filename = "authors_list_biorxiv.tsv"
+    # prepare_data()
+    df = pd.DataFrame(ws.values)
+    d_df = df.to_dict()
+    with open(filename, mode='w', encoding='utf8', newline='\n') as tsv_file:
+        tsv_writer = csv.writer(tsv_file, delimiter='\t', lineterminator='\n')
+        tsv_writer.writerow(["Email", "Institution", "First Name", "Middle Name(s)/Initial(s)", "Last Name", "Suffix",
+                             "Corresponding Author", "Home Page URL", "Collaborative Group/Consortium", "ORCiD"])
+        for index, row in enumerate(ws.iter_rows(min_row=2)):
+            first_name = row[0].value
+            first_name = unidecode(first_name)
+            last_name = row[1].value
+            last_name = unidecode(last_name)
+            email_address = row[2].value
+
+            affiliation1 = row[3].value
+            affiliation2 = row[4].value
+            affiliation3 = row[5].value
+            affiliation4 = row[6].value
+            affiliation = combine_affiliations([affiliation1, affiliation2, affiliation3, affiliation4])
+            affiliation = unidecode(affiliation)
+            arr = [email_address, affiliation, first_name, "", last_name, "", "", "", "", ""]
+            if email_address == "sheriff@ebi.ac.uk":
+                arr = [email_address, affiliation, first_name, "", last_name, "", "X", "", "", ""]
+            tsv_writer.writerow(arr)
+
+
 if __name__ == "__main__":
     # generate_with_random_names()
-    generate_author_list()
+    # generate_author_list()
+    generate_author_list_for_biorxiv()
+    # prepare_data()
